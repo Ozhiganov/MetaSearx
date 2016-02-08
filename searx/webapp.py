@@ -728,6 +728,16 @@ def stats():
     )
 
 
+@app.route('/stats2', methods=['GET'])
+def stats2():
+    """Render engine statistics page."""
+    stats = searx.metrology.specific.get_engines_stats2()
+    return render(
+        'stats2.html',
+        stats=stats,
+    )
+
+
 @app.route('/robots.txt', methods=['GET'])
 def robots():
     return Response("""User-agent: *

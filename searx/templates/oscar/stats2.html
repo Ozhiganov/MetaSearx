@@ -1,0 +1,13 @@
+{% extends "oscar/base.html" %}
+{% block title %}{{ _('stats') }} - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.jqplot.min.css') }}" />
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  {% include 'default/stats.content.html' %}
+</div>
+{% endblock %}
+{% block bottom %}
+  {% include 'default/stats.js.html' %}
+{% endblock %}
