@@ -61,7 +61,6 @@ def search_request_wrapper(fn, url, engine_name, **kwargs):
         search_duration = time() - tstart
         timeout_overhead = 0.2  # seconds
         timeout_limit = engines[engine_name].timeout + timeout_overhead
-        print engine_name, timeout_limit, search_duration
         if search_duration > timeout_limit:
             search_duration = timeout_limit
         metrology.record(search_duration, engine_name, 'time', 'search')
