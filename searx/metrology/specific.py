@@ -166,6 +166,7 @@ def get_engines_stats():
         ),
     ]
 
+
 def get_engines_stats2():
     stats = []
     max_error = max_score_per_result = 0  # noqa
@@ -326,4 +327,3 @@ def get_engines_stats2():
         },
         'count': len(stats)
         }
-
