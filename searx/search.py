@@ -35,6 +35,7 @@ logger = logger.getChild('search')
 
 
 def search_request_wrapper(fn, url, engine_name, **kwargs):
+    tstart = time()
     try:
         return fn(url, **kwargs)
     except Exception as e:
@@ -54,6 +55,18 @@ def search_request_wrapper(fn, url, engine_name, **kwargs):
             # others errors
             metrology.counter_inc(engine_name, 'error', 'other')
             logger.exception('{0} : engine crash : {1}'.format(engine_name, e))
+
+        # time
+        # FIXME : metrology.record(time() - params['started'], engine_name, 'time', 'total')
+        search_duration = time() - tstart
+        timeout_overhead = 0.2  # seconds
+        timeout_limit = engines[engine_name].timeout + timeout_overhead
+        print engine_name, timeout_limit, search_duration
+        if search_duration > timeout_limit:
+            search_duration = timeout_limit
+        metrology.record(search_duration, engine_name, 'time', 'search')
+        metrology.record(0, engine_name, 'time', 'callback')
+        metrology.record(0, engine_name, 'time', 'append')
 
         return
 
@@ -108,9 +121,10 @@ def make_callback(engine_name, callback, params, result_container):
 
         response.search_params = params
 
-        search_duration = time() - params['started']
+        t = time()
+        search_duration = t - params['started']
         # update stats with current page-load-time
-        metrology.record(search_duration, engine_name, 'time', 'search')
+        metrology.record(t - params['search_started'], engine_name, 'time', 'search')
 
         timeout_overhead = 0.2  # seconds
         timeout_limit = engines[engine_name].timeout + timeout_overhead
@@ -118,8 +132,8 @@ def make_callback(engine_name, callback, params, result_container):
         if search_duration > timeout_limit:
             metrology.counter_inc(engine_name, 'error')
             metrology.counter_inc(engine_name, 'error', 'timeout')
-            metrology.record(time() - params['started'], engine_name, 'time', 'total')
             # no callback but to keep the average consistant with the search time
+            metrology.record(time() - params['started'], engine_name, 'time', 'total')
             metrology.record(0, engine_name, 'time', 'callback')
             metrology.record(0, engine_name, 'time', 'append')
             return
@@ -323,6 +337,8 @@ class Search(object):
             if request_params['url'] is None:
                 # TODO add support of offline engines
                 pass
+
+            request_params['search_started'] = time()
 
             # create a callback wrapper for the search engine results
             callback = make_callback(

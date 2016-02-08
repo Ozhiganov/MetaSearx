@@ -86,5 +86,7 @@
     {% for script in scripts %}
         <script src="{{ url_for('static', filename=script) }}"></script>
     {% endfor %}
+    {% block bottom %}
+    {% endblock %}
 </body>
 </html>

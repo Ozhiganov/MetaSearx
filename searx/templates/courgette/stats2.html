@@ -1,0 +1,16 @@
+{% extends "courgette/base.html" %}
+{% block head %} 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.jqplot.min.css') }}" />
+    <style>
+      .jqplot-table-legend { width: auto; }
+      table tr { background: none !important; }
+      .row { max-width: 1400px; }
+    </style>
+{% endblock %}
+{% block content %}
+{% include 'default/stats.content.html' %}
+{% endblock %}
+{% block bottom %}
+    <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+{% include 'default/stats.js.html' %}
+{% endblock %}
